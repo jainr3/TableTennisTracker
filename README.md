@@ -17,7 +17,7 @@
   <p align="center">
     Tracks a table tennis ball as a game is being played.
     <br/>
-    <a href="https://github.com/jainr3 TableTennisTracker"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/jainr3/TableTennisTracker"><strong>Explore the docs »</strong></a>
     <br/>
   </p>
 </div>
@@ -77,7 +77,9 @@ Follow the steps to set up the project locally.
 
 2. Now open the DroidCam application on the phone and open it on the PC as well. You might have to allow access to the camera / microphone on the phone side as well as accept any other permissions. After a few seconds, the phone will be automatically detected on the DroidCam Client on the PC as shown below. Be sure to select the "Connect over USB" option as that will provide the best latency versus sending the video stream over the internet.
 
-![DroidCam Client on PC](img/droidcam_client_pc.png)
+<div align="center">
+  <img src="img/droidcam_client_pc.png" alt="DroidCam Client on PC">
+</div>
 
 3. Next, clone the repository
    ```sh
@@ -92,9 +94,13 @@ Follow the steps to set up the project locally.
    python3 app.py
    ```
 
+<div align="center">
+  <img src="img/flask_app_run.png" alt="Flask App Run">
+</div>
+
+6. Then go to the url that appears to view the video stream!
+
 <p align="right">[<a href="#top">Top</a>]</p>
-
-
 
 ## Usage
 
@@ -118,7 +124,7 @@ Project Link: [https://github.com/jainr3/TableTennisTracker](https://github.com/
 
 ## Acknowledgments
 
-* [Cornell University ECSE 5760 Spring 2015 Final Project](https://people.ece.cornell.edu/land/courses/ece5760/FinalProjects/s2015/ttt/ttt/ttt/index.html#top)
+* [Cornell University ECE 5760 Spring 2015 Final Project](https://people.ece.cornell.edu/land/courses/ece5760/FinalProjects/s2015/ttt/ttt/ttt/index.html#top)
 * [Ball Tracking Algorithm](https://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/)
 * [Flask App Basics](https://www.pyimagesearch.com/2019/09/02/opencv-stream-video-to-web-browser-html-page/)
 * [Flask App Reference](https://towardsdatascience.com/video-streaming-in-web-browsers-with-opencv-flask-93a38846fe00)

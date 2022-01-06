@@ -9,7 +9,8 @@ import time
 import urllib.request
 
 class Camera(BaseCamera):
-    # Video Source = 0 is generally the embedded webcam; 1 is the USB camera
+    # PC: Video Source = 0 is generally the embedded webcam; 1 is the USB camera
+    # Raspberry Pi: Video Source = 0 is the USB camera
     video_source = 1
 
     def __init__(self):

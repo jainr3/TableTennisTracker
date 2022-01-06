@@ -66,8 +66,8 @@ Follow the steps to set up the project locally.
 
 ### Prerequisites
 
-* Android device connected to your PC over USB cable
-  * Can also use Raspberry Pi instead of PC
+* Android device connected to your PC over USB cable (recommended)
+  * Can also use Raspberry Pi instead of PC (from testing it seems to be slower)
 * DroidCam Android Application and Windows Client
   * See [here](https://www.dev47apps.com/) for download link
 * Tripod with phone mount (Optional but recommended)
@@ -86,7 +86,7 @@ If you instead want to use a Raspberry Pi, install the Linux distribution of Dro
 ```sh
 sudo apt-get install adb
 ```
-The instructions at the original [source](https://www.dev47apps.com/droidcam/linux/) for linux doesn't translate exactly to Rasbperry Pi. There was also a small issue with the premade script which is discussed [here](https://github.com/IM-TechieScientist/droidcam-raspberrypi-auto-install/issues/2). Additional references that may be helpful: [1](https://github.com/dev47apps/droidcam), [2](https://github.com/dev47apps/droidcam/issues/6)
+The instructions at the original [source](https://www.dev47apps.com/droidcam/linux/) for linux doesn't translate exactly to Rasbperry Pi. There was also a small issue with the premade script which is discussed [here](https://github.com/IM-TechieScientist/droidcam-raspberrypi-auto-install/issues/2). Additional references that may be helpful: [1](https://github.com/dev47apps/droidcam), [2](https://github.com/dev47apps/droidcam/issues/6). The Raspberry Pi + DroidCam + Android over USB seemed to give a delayed video feed, so the PC method is recommended.
 
 3. Next, clone the repository
    ```sh

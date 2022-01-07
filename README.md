@@ -8,12 +8,9 @@
 
 <br/>
 <div align="center">
-  <a href="https://github.com/jainr3/TableTennisTracker">
-    <img src="img/logo.png" alt="Logo" width="80" height="80">
-  </a>
+
 
 <h3 align="center">Table Tennis Tracker</h3>
-
   <p align="center">
     Tracks a table tennis ball as a game is being played.
     <br/>
@@ -47,7 +44,9 @@
 
 ## About The Project
 
-[![Table Tennis Tracker Screen Shot][product-screenshot]](https://github.com/jainr3/TableTennisTracker)
+  <a href="https://github.com/jainr3/TableTennisTracker">
+    <img src="img/bounce.gif" alt="Bounce">
+  </a>
 
 This project tracks a table tennis ball as it moves around during gameplay.
 
@@ -184,4 +183,3 @@ Project Link: [https://github.com/jainr3/TableTennisTracker](https://github.com/
 [issues-url]: https://github.com/jainr3/TableTennisTracker/issues
 [license-shield]: https://img.shields.io/github/license/jainr3/TableTennisTracker.svg?style=for-the-badge
 [license-url]: https://github.com/jainr3/TableTennisTracker/blob/master/LICENSE.txt
-[product-screenshot]: img/screenshot.png

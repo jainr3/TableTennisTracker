@@ -8,8 +8,6 @@
 
 <br/>
 <div align="center">
-
-
 <h3 align="center">Table Tennis Tracker</h3>
   <p align="center">
     Tracks a table tennis ball as a game is being played.
@@ -44,9 +42,11 @@
 
 ## About The Project
 
+<div align="center">
   <a href="https://github.com/jainr3/TableTennisTracker">
     <img src="img/bounce.gif" alt="Bounce">
   </a>
+</div>
 
 This project tracks a table tennis ball as it moves around during gameplay.
 

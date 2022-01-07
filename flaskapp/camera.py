@@ -27,8 +27,8 @@ class Camera(BaseCamera):
         # define the lower and upper boundaries of the colored
         # ball in the HSV color space, then initialize the
         # list of tracked points
-        colorLower = (10, 100, 200)
-        colorUpper = (25, 255, 255)
+        colorLower = (0, 94, 108)
+        colorUpper = (25, 255, 197)
         buffer = 4
         pts = deque(maxlen=buffer)
         camera = cv2.VideoCapture(Camera.video_source)

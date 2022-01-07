@@ -96,7 +96,46 @@ The instructions at the original [source](https://www.dev47apps.com/droidcam/lin
    ```sh
    pip3 install -r requirements.txt
    ```
-5. Navigate to the flaskapp folder and run the following command.
+
+<p align="right">[<a href="#top">Top</a>]</p>
+
+## Usage
+
+### Calibration
+
+1. For best performance, mount the phone on a tripod. Then aim the phone's camera at the table so it is level with the surface and centered at the net. Assume that the humans are out of the camera frame. Also make sure there is enough light in the environment. I had to switch out yellow light bulbs with bulbs that give white light.
+
+<div align="center">
+  <img src="img/setup.png" alt="Setup">
+</div>
+
+2. Place a couple of ping pong balls around the table. I used orange because it contrasts well with the environment. Take a photo of the setup with the ping pong balls and place it in the img directory as 'calibrate.png'. Now, run the calibration script ([source](https://stackoverflow.com/a/59906154)) to figure out the best masking for the color of the ping pong ball. Keep changing the sliders until only the ping pong ball(s) remain in the image. For my setup it looked like the following.
+
+   ```sh
+   python3 calibrate_color.py
+   ```
+
+<div align="center">
+  <img src="img/calibrate.png" alt="Calibrate">
+</div>
+
+<div align="center">
+  <img src="img/masked.png" alt="Masked">
+</div>
+
+3. Now take the number range in the sliders and in camera.py, modify the colorLower and colorUpper tuples. The script should now be calibrated for the environment. To confirm, run the confirmation script using the following command. There may be some noise, as in the case of my example, where a ping pong racket was partially detected.
+
+   ```sh
+   python3 confirm_mask.py
+   ```
+
+<div align="center">
+  <img src="img/masked_confirm.png" alt="Masked">
+</div>
+
+### Running the flask app
+
+1. Navigate to the flaskapp folder and run the following command.
    ```sh
    python3 app.py
    ```
@@ -105,13 +144,7 @@ The instructions at the original [source](https://www.dev47apps.com/droidcam/lin
   <img src="img/flask_app_run.png" alt="Flask App Run">
 </div>
 
-6. Then go to the url that appears to view the video stream!
-
-<p align="right">[<a href="#top">Top</a>]</p>
-
-## Usage
-
-For best performance, mount the phone on a tripod. Then aim the phone's camera at the table so it is level with the surface and centered at the net.
+2. Then go to the url that appears to view the video stream!
 
 <p align="right">[<a href="#top">Top</a>]</p>
 

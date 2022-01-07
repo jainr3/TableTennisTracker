@@ -35,10 +35,15 @@ class Camera(BaseCamera):
         #camera = VideoStream(src=0).start() 
         # allow the camera or video file to warm up
         time.sleep(2.0)
+        # initialize the fourcc, videowriter, dimensions
+        fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+        writer = None
+        (h, w) = (None, None)
 
-        while True:
+        while camera.isOpened():
             # read current frame
             _, frame = camera.read()
+
             # frame = camera.read()
             # resize the frame, blur it, and convert it to the HSV
             # color space
@@ -90,3 +95,13 @@ class Camera(BaseCamera):
 
             # encode as a jpeg image and return it
             yield cv2.imencode('.jpg', frame)[1].tobytes()
+
+            if writer is None:
+                filename = time.strftime("%Y-%m-%d %H-%M-%S") + '.avi'
+                (h, w) = frame.shape[:2]
+                writer = cv2.VideoWriter(filename, fourcc, 20, (w, h), True)
+
+            writer.write(frame)
+
+        camera.release()
+        writer.release()

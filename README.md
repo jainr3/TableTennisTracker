@@ -44,7 +44,7 @@
   </a>
 </div>
 
-This project tracks a table tennis ball as it moves around during gameplay.
+This project tracks a table tennis ball as it moves around during gameplay. While in professional table tennis, the ball may be hit at much faster speeds, this project aims to track the ball at lower speeds using a regular mobile device camera. Additionally, the performance is highly dependent on the lighting conditions and overall environment setup.
 
 <p align="right">[<a href="#top">Top</a>]</p>
 
@@ -71,7 +71,7 @@ Follow the steps to set up the project locally.
 
 1. Connect android device to PC over a USB cable. To make the connection, first enable developer options on the android device by going to Settings > About Phone and tapping the "Build Number" 7 times in a row. This will enable a new "Developer options" menu that is available under Settings or Settings > System. In the Developer Options menu, enable the USB debugging option. This will allow the PC to read data from the android device.
 
-2. Now open the DroidCam application on the phone and open it on the PC as well. You might have to allow access to the camera / microphone on the phone side as well as accept any other permissions. After a few seconds, the phone will be automatically detected on the DroidCam Client on the PC as shown below. Be sure to select the "Connect over USB" option as that will provide the best latency versus sending the video stream over the internet.
+2. Now open the DroidCam application on the phone and open it on the PC as well. You might have to allow access to the camera / microphone on the phone side as well as accept any other permissions. After a few seconds, the phone will be automatically detected on the DroidCam Client on the PC as shown below. Be sure to select the "Connect over USB" option as that will provide the best latency versus sending the video stream over the internet. To get better resolution, you might want to enable HD mode by watching an ad on the android device. Also, the PC application should have a setting to increase resolution (you may have to restart the computer).
 
 <div align="center">
   <img src="img/droidcam_client_pc.png" alt="DroidCam Client on PC">

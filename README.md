@@ -6,14 +6,10 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 
-<br/>
 <div align="center">
 <h3 align="center">Table Tennis Tracker</h3>
   <p align="center">
     Tracks a table tennis ball as a game is being played.
-    <br/>
-    <a href="https://github.com/jainr3/TableTennisTracker"><strong>Explore the docs »</strong></a>
-    <br/>
   </p>
 </div>
 

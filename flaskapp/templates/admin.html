@@ -8,6 +8,8 @@
     <div class="container">
       <h1>Table Tennis Tracker Admin Controls</h1>
       <br>
+      <img src="{{ url_for('video_feed') }}" height="60%">
+      <br>
       <form method="post">
         {% if noactivegame %}
           <select class='dropdown' id='dropdown_points' size='1' name='dropdown_points' required onchange="enableButton()"/>

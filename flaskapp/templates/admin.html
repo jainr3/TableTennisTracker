@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{{url_for('static', filename='main.js')}}"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Table Tennis Tracker Admin Controls</h1>
+      <br>
+      <form method="post">
+        {% if noactivegame %}
+
+        <select class='dropdown' id='dropdown_points' size='1' name='dropdown_points' required onchange="enableButton()"/>
+        <option value=''>Select Score Required for Victory</option>
+        <option value="11">11</option>
+        <option value="21">21</option>
+        </select>
+
+        <input class="btn btn-default" id="start_newgame", type="submit" name ="start_newgame", value="Start New Game">
+        {% else %}
+        <input class="btn btn-default" id="increase_p1", type="submit" name ="increase_p1", value="Increment Player 1 Score">
+        <input class="btn btn-default" id="decrease_p1", type="submit" name ="decrease_p1", value="Decrement Player 1 Score">
+        <input class="btn btn-default" id="increase_p2", type="submit" name ="increase_p2", value="Increment Player 2 Score">
+        <input class="btn btn-default" id="decrease_p2", type="submit" name ="decrease_p2", value="Decrement Player 2 Score">
+        {% endif %}
+      </form>
+
+    </div>
+  </body>
+</html>

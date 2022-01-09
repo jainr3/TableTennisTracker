@@ -6,7 +6,6 @@ from imutils.video import VideoStream
 import numpy as np
 import imutils
 import time
-import urllib.request
 
 class Camera(BaseCamera):
     # PC: Video Source = 0 is generally the embedded webcam; 1 is the USB camera
@@ -101,6 +100,9 @@ class Camera(BaseCamera):
                 cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
             (h, w) = frame.shape[:2]
+
+            # TODO: Update gamestate
+
             if Camera.save_video and writer is None:
                 filename = time.strftime("%Y-%m-%d %H-%M-%S") + '.avi'
                 writer = cv2.VideoWriter(filename, fourcc, 20, (w, h), True)

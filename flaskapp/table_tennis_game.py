@@ -1,12 +1,16 @@
+import random
 
 class TableTennisGame():
     # Keep track of the game state
     def __init__(self, pr):
         self.score = [0, 0]
-        self.first_server = 0 # TODO
-        self.server = None
+        self.first_server = self.set_first_server()
+        self.server = self.recalculate_server()
         self.points_required = int(pr)
         self.set_serves_per_turn()
+
+    def __str__(self):
+        return "Game to " + str(self.points_required) + " with score " + str(self.score[0]) + "-" + str(self.score[1])
 
     def set_serves_per_turn(self):
         if self.points_required == 21:
@@ -14,20 +18,19 @@ class TableTennisGame():
         else:
             self.serves_per_turn = 2
 
-    def set_first_server(self, sv):
-        self.first_server = sv
+    def set_first_server(self):
+        # Randomly determine the first server
+        self.first_server = random.getrandbits(1)
 
     def increment(self, player):
-        self.score[player] += 1
+        if not self.check_winner():
+            self.score[player] += 1
         self.recalculate_server()
-        self.check_winner()
-        # TODO: Update visual display as well
 
     def decrement(self, player):
-        if self.score[player] > 0:
+        if not self.check_winner() and self.score[player] > 0:
             self.score[player] -= 1
         self.recalculate_server()
-        # TODO: Update visual display as well
 
     def recalculate_server(self):
         # Based on the points, first server, and num serves per turn
@@ -43,11 +46,15 @@ class TableTennisGame():
             self.server = self.first_server
 
     def check_winner(self):
-        if self.score[0] == self.points_required:
-            print("P1 wins")
-            # TODO end game
-        elif self.score[1] == self.points_required:
-            print("P2 wins")
+        if self.score[0] == self.points_required or self.score[1] == self.points_required:
+            return True
+        else:
+            return False
 
-    def update_game_state():
-        pass
+    def find_winner(self):
+        if self.score[0] == self.points_required:
+            return 0
+        elif self.score[1] == self.points_required:
+            return 1
+        else:
+            return None

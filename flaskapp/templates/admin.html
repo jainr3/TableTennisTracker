@@ -19,11 +19,19 @@
 
         <input class="btn btn-default" id="start_newgame", type="submit" name ="start_newgame", value="Start New Game">
         {% else %}
+
+        {% if winner %}
+        <input class="btn btn-default" id="confirm_winner", type="submit" name ="confirm_winner", value="Confirm Winner">
+
+        {% else %}
         <input class="btn btn-default" id="increase_p1", type="submit" name ="increase_p1", value="Increment Player 1 Score">
         <input class="btn btn-default" id="decrease_p1", type="submit" name ="decrease_p1", value="Decrement Player 1 Score">
         <input class="btn btn-default" id="increase_p2", type="submit" name ="increase_p2", value="Increment Player 2 Score">
         <input class="btn btn-default" id="decrease_p2", type="submit" name ="decrease_p2", value="Decrement Player 2 Score">
         {% endif %}
+        
+        {% endif %}
+
       </form>
 
     </div>

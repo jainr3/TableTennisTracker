@@ -88,6 +88,10 @@ def login():
 @flask_login.login_required
 def admin():
     noactivegame = table_tennis.noactive_game()
+    if not noactivegame:
+        winner = table_tennis.current_game.check_winner()
+    else:
+        winner = False
     if request.method == 'POST':
         if request.form.get('start_newgame') and request.form['start_newgame'] == "Start New Game":
             points_required = request.form.get('dropdown_points')
@@ -96,15 +100,21 @@ def admin():
             noactivegame = table_tennis.noactive_game()
         elif request.form.get('increase_p1') and request.form['increase_p1'] == "Increment Player 1 Score":
             table_tennis.current_game.increment(0)
+            winner = table_tennis.current_game.check_winner()
         elif request.form.get('decrease_p1') and request.form['decrease_p1'] == "Decrement Player 1 Score":
             table_tennis.current_game.decrement(0)
         elif request.form.get('increase_p2') and request.form['increase_p2'] == "Increment Player 2 Score":
             table_tennis.current_game.increment(1)
+            winner = table_tennis.current_game.check_winner()
         elif request.form.get('decrease_p2') and request.form['decrease_p2'] == "Decrement Player 2 Score":
             table_tennis.current_game.decrement(1)
-        return render_template('admin.html', noactivegame=noactivegame)
+        elif request.form.get('confirm_winner') and request.form['confirm_winner'] == "Confirm Winner":
+            table_tennis.end_game()
+            noactivegame = table_tennis.noactive_game()
+            winner = False
+        return render_template('admin.html', noactivegame=noactivegame, winner=winner)
     elif request.method == 'GET':
-        return render_template('admin.html', noactivegame=noactivegame)
+        return render_template('admin.html', noactivegame=noactivegame, winner=winner)
 
 @app.route('/logout')
 def logout():

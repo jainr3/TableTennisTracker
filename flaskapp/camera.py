@@ -11,10 +11,9 @@ class Camera(BaseCamera):
     # PC: Video Source = 0 is generally the embedded webcam; 1 is the USB camera
     # Raspberry Pi: Video Source = 0 is the USB camera
     video_source = 1
-    save_video = False
+    writer = None
 
-    def __init__(self, sv):
-        Camera.set_save_video(sv)
+    def __init__(self):
         if os.environ.get('OPENCV_CAMERA_SOURCE'):
             Camera.set_video_source(int(os.environ['OPENCV_CAMERA_SOURCE']))
         super(Camera, self).__init__()
@@ -22,10 +21,6 @@ class Camera(BaseCamera):
     @staticmethod
     def set_video_source(source):
         Camera.video_source = source
-
-    @staticmethod
-    def set_save_video(sv):
-        Camera.save_video = sv
 
     @staticmethod
     def frames():
@@ -40,11 +35,6 @@ class Camera(BaseCamera):
         #camera = VideoStream(src=0).start() 
         # allow the camera or video file to warm up
         time.sleep(2.0)
-        # initialize the fourcc, videowriter, dimensions
-        if Camera.save_video:
-            fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-            writer = None
-            (h, w) = (None, None)
 
         while camera.isOpened():
             # read current frame
@@ -99,13 +89,15 @@ class Camera(BaseCamera):
                 thickness = int(np.sqrt(buffer / float(i + 1)) * 2.5)
                 cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
+            # Set the frame size for use elsewhere
             (h, w) = frame.shape[:2]
+            BaseCamera.frame_h = h
+            BaseCamera.frame_w = w
+            # Save the video frame if the writer is active
+            if Camera.writer != None:
+                Camera.writer.write(frame)
 
             # TODO: Update gamestate
-
-            if Camera.save_video and writer is None:
-                filename = time.strftime("%Y-%m-%d %H-%M-%S") + '.avi'
-                writer = cv2.VideoWriter(filename, fourcc, 20, (w, h), True)
 
             # Draw the guidelines
             cv2.line(img=frame, pt1=(int(w/2), 0), pt2=(int(w/2), h), color=(255, 0, 0), thickness=2, lineType=8, shift=0)
@@ -113,9 +105,5 @@ class Camera(BaseCamera):
 
             # encode as a jpeg image and return it
             yield cv2.imencode('.jpg', frame)[1].tobytes()
-            # Save to file
-            if Camera.save_video:
-                writer.write(frame)
 
         camera.release()
-        writer.release()

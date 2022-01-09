@@ -10,30 +10,30 @@
       <br>
       <form method="post">
         {% if noactivegame %}
-
-        <select class='dropdown' id='dropdown_points' size='1' name='dropdown_points' required onchange="enableButton()"/>
-        <option value=''>Select Score Required for Victory</option>
-        <option value="11">11</option>
-        <option value="21">21</option>
-        </select>
-
-        <input class="btn btn-default" id="start_newgame", type="submit" name ="start_newgame", value="Start New Game">
+          <select class='dropdown' id='dropdown_points' size='1' name='dropdown_points' required onchange="enableButton()"/>
+          <option value=''>Select Score Required for Victory</option>
+          <option value="11">11</option>
+          <option value="21">21</option>
+          </select>
+          <input class="btn btn-default" id="start_newgame", type="submit" name ="start_newgame", value="Start New Game">
         {% else %}
-
-        {% if winner %}
-        <input class="btn btn-default" id="confirm_winner", type="submit" name ="confirm_winner", value="Confirm Winner">
-
-        {% else %}
-        <input class="btn btn-default" id="increase_p1", type="submit" name ="increase_p1", value="Increment Player 1 Score">
-        <input class="btn btn-default" id="decrease_p1", type="submit" name ="decrease_p1", value="Decrement Player 1 Score">
-        <input class="btn btn-default" id="increase_p2", type="submit" name ="increase_p2", value="Increment Player 2 Score">
-        <input class="btn btn-default" id="decrease_p2", type="submit" name ="decrease_p2", value="Decrement Player 2 Score">
+          {% if recording_active %}
+            <input class="btn btn-default" id="record", type="submit" name ="record", value="Stop Recording">
+          {% else %}
+            <input class="btn btn-default" id="record", type="submit" name ="record", value="Start Recording">
+          {% endif %}
+          {% if winner %}
+            <input class="btn btn-default" id="confirm_winner", type="submit" name ="confirm_winner", value="Confirm Winner">
+            <input class="btn btn-default" id="unconfirm_winner", type="submit" name ="unconfirm_winner", value="Unconfirm Winner">
+          {% else %}
+            <input class="btn btn-default" id="increase_p1", type="submit" name ="increase_p1", value="Increment Player 1 Score">
+            <input class="btn btn-default" id="decrease_p1", type="submit" name ="decrease_p1", value="Decrement Player 1 Score">
+            <input class="btn btn-default" id="increase_p2", type="submit" name ="increase_p2", value="Increment Player 2 Score">
+            <input class="btn btn-default" id="decrease_p2", type="submit" name ="decrease_p2", value="Decrement Player 2 Score">
+            <input class="btn btn-default" id="end_game", type="submit" name ="end_game", value="End Game">
+          {% endif %}
         {% endif %}
-        
-        {% endif %}
-
       </form>
-
     </div>
   </body>
 </html>

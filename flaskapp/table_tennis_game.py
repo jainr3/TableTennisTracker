@@ -5,9 +5,9 @@ class TableTennisGame():
     def __init__(self, pr):
         self.score = [0, 0]
         self.first_server = self.set_first_server()
-        self.server = self.recalculate_server()
         self.points_required = int(pr)
         self.set_serves_per_turn()
+        self.server = self.recalculate_server()
 
     def __str__(self):
         return "Game to " + str(self.points_required) + " with score " + str(self.score[0]) + "-" + str(self.score[1])
@@ -46,15 +46,25 @@ class TableTennisGame():
             self.server = self.first_server
 
     def check_winner(self):
-        if self.score[0] == self.points_required or self.score[1] == self.points_required:
+        if ((self.score[0] >= self.points_required and self.score[0] >= self.score[1] + 2) or 
+            (self.score[1] >= self.points_required and self.score[1] >= self.score[0] + 2)):
             return True
         else:
             return False
 
     def find_winner(self):
-        if self.score[0] == self.points_required:
+        if (self.score[0] >= self.points_required and self.score[0] >= self.score[1] + 2):
             return 0
-        elif self.score[1] == self.points_required:
+        elif (self.score[1] >= self.points_required and self.score[1] >= self.score[0] + 2):
             return 1
         else:
             return None
+
+    def unconfirm_winner(self):
+        # reduce highest score by 1 since last point is not counting
+        if self.score[0] > self.score[1]:
+            self.score[0] -= 1
+        elif self.score[0] < self.score[1]:
+            self.score[1] -= 1
+        else:
+            print("Warning: Unconfirming a winner with tied score is not valid")

@@ -65,6 +65,10 @@ class BaseCamera(object):
             BaseCamera.thread = threading.Thread(target=self._thread)
             BaseCamera.thread.start()
 
+            # Create frame sizes
+            BaseCamera.frame_h = None
+            BaseCamera.frame_w = None
+
             # wait until first frame is available
             BaseCamera.event.wait()
 
@@ -77,6 +81,9 @@ class BaseCamera(object):
         BaseCamera.event.clear()
 
         return BaseCamera.frame
+
+    def get_frame_size(self):
+        return (BaseCamera.frame_h, BaseCamera.frame_w)
 
     @staticmethod
     def frames():

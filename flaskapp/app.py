@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from importlib import import_module
-import os
+import cv2, time
 from flask import Flask, render_template, Response, request, redirect, url_for, session
 import flask_login
 
@@ -13,7 +13,6 @@ from table_tennis import TableTennis
 from table_tennis_game import TableTennisGame
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--save_video', default=False, action='store_true', help="Defaults to False if not passed")
 args = parser.parse_args()
 
 app = Flask(__name__)
@@ -28,6 +27,7 @@ users = {'admin': {'password': 'admin'}}
 
 # Initialize game states
 table_tennis = TableTennis()
+recording_active = False
 
 class User(flask_login.UserMixin):
     pass
@@ -61,12 +61,25 @@ def gen(camera):
     yield b'--frame\r\n'
     while True:
         frame = camera.get_frame()
+
+        if recording_active:
+            if Camera.writer is None:
+                (h, w) = camera.get_frame_size()
+                filename = time.strftime("%Y-%m-%d %H-%M-%S") + '.avi'
+                # initialize the fourcc, videowriter, dimensions
+                fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+                Camera.writer = cv2.VideoWriter(filename, fourcc, 20, (w, h), True)
+        else:
+            if Camera.writer is not None:
+                Camera.writer.release()
+                Camera.writer = None
+
         yield b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n--frame\r\n'
 
 @app.route('/video_feed')
 def video_feed():
     """Video streaming route. Put this in the src attribute of an img tag."""
-    return Response(gen(Camera(args.save_video)),
+    return Response(gen(Camera()),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # Route for handling the login page logic
@@ -87,12 +100,19 @@ def login():
 @app.route('/admin', methods=['GET', 'POST'])
 @flask_login.login_required
 def admin():
+    global recording_active
     noactivegame = table_tennis.noactive_game()
     if not noactivegame:
         winner = table_tennis.current_game.check_winner()
     else:
         winner = False
     if request.method == 'POST':
+        # Handle the recording button
+        if request.form.get('record') and request.form['record'] == "Start Recording":
+            recording_active = True
+        elif request.form.get('record') and request.form['record'] == "Stop Recording":
+            recording_active = False
+
         if request.form.get('start_newgame') and request.form['start_newgame'] == "Start New Game":
             points_required = request.form.get('dropdown_points')
             game = TableTennisGame(points_required)
@@ -103,18 +123,25 @@ def admin():
             winner = table_tennis.current_game.check_winner()
         elif request.form.get('decrease_p1') and request.form['decrease_p1'] == "Decrement Player 1 Score":
             table_tennis.current_game.decrement(0)
+            winner = table_tennis.current_game.check_winner()
         elif request.form.get('increase_p2') and request.form['increase_p2'] == "Increment Player 2 Score":
             table_tennis.current_game.increment(1)
             winner = table_tennis.current_game.check_winner()
         elif request.form.get('decrease_p2') and request.form['decrease_p2'] == "Decrement Player 2 Score":
             table_tennis.current_game.decrement(1)
-        elif request.form.get('confirm_winner') and request.form['confirm_winner'] == "Confirm Winner":
+            winner = table_tennis.current_game.check_winner()
+        elif ((request.form.get('confirm_winner') and request.form['confirm_winner'] == "Confirm Winner") or 
+              (request.form.get('end_game') and request.form['end_game'] == "End Game")):
             table_tennis.end_game()
             noactivegame = table_tennis.noactive_game()
             winner = False
-        return render_template('admin.html', noactivegame=noactivegame, winner=winner)
+            recording_active = False
+        elif request.form.get('unconfirm_winner') and request.form['unconfirm_winner'] == "Unconfirm Winner":
+            table_tennis.current_game.unconfirm_winner()
+            winner = False
+        return render_template('admin.html', noactivegame=noactivegame, winner=winner, recording_active=recording_active)
     elif request.method == 'GET':
-        return render_template('admin.html', noactivegame=noactivegame, winner=winner)
+        return render_template('admin.html', noactivegame=noactivegame, winner=winner, recording_active=recording_active)
 
 @app.route('/logout')
 def logout():

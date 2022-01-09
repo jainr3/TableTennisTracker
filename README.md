@@ -143,6 +143,31 @@ The instructions at the original [source](https://www.dev47apps.com/droidcam/lin
 
 <p align="right">[<a href="#top">Top</a>]</p>
 
+### Accessing the admin page
+
+1. Once the application is running, go to the /login page to login as the administrator. The administrator credentials are: 
+   ```sh
+   Username: admin
+   Password: admin
+   ```
+   In the future, a real database can be connected to allow for more roles and to obfuscate these credentials.
+
+<div align="center">
+  <img src="img/login_page.png" alt="Login Page">
+</div>
+
+2. After logging in, the video stream will appear along with some controls to manage table tennis games. The admin has the option to start a game, begin recording, add/subtract points, and end a game.
+
+<div align="center">
+  <img src="img/admin_page1.png" alt="Admin Page 1">
+</div>
+
+When a game is active, the following options will appear.
+
+<div align="center">
+  <img src="img/admin_page2.png" alt="Admin Page 1">
+</div>
+
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.

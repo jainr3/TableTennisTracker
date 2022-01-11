@@ -27,6 +27,7 @@ users = {'admin': {'password': 'admin'}}
 
 # Initialize game states
 table_tennis = TableTennis()
+Camera.table_tennis = table_tennis
 recording_active = False
 
 class User(flask_login.UserMixin):
@@ -113,7 +114,9 @@ def admin():
         elif request.form.get('record') and request.form['record'] == "Stop Recording":
             recording_active = False
 
-        if request.form.get('start_newgame') and request.form['start_newgame'] == "Start New Game":
+        if request.form.get('toggle_guidelines') and request.form['toggle_guidelines'] == "Toggle Guidelines":
+            Camera.guidelines = not Camera.guidelines
+        elif request.form.get('start_newgame') and request.form['start_newgame'] == "Start New Game":
             points_required = request.form.get('dropdown_points')
             game = TableTennisGame(points_required)
             table_tennis.set_current_game(game)

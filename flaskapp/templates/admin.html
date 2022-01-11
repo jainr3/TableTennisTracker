@@ -11,6 +11,14 @@
       <img src="{{ url_for('video_feed') }}" height="60%">
       <br>
       <form method="post">
+        <input class="btn btn-default" id="toggle_guidelines", type="submit" name ="toggle_guidelines", value="Toggle Guidelines">
+        {% if recording_active %}
+          <input class="btn btn-default" id="record", type="submit" name ="record", value="Stop Recording">
+        {% else %}
+          <input class="btn btn-default" id="record", type="submit" name ="record", value="Start Recording">
+        {% endif %}
+      </form>
+      <form method="post">
         {% if noactivegame %}
           <select class='dropdown' id='dropdown_points' size='1' name='dropdown_points' required onchange="enableButton()"/>
           <option value=''>Select Score Required for Victory</option>
@@ -19,11 +27,6 @@
           </select>
           <input class="btn btn-default" id="start_newgame", type="submit" name ="start_newgame", value="Start New Game">
         {% else %}
-          {% if recording_active %}
-            <input class="btn btn-default" id="record", type="submit" name ="record", value="Stop Recording">
-          {% else %}
-            <input class="btn btn-default" id="record", type="submit" name ="record", value="Start Recording">
-          {% endif %}
           {% if winner %}
             <input class="btn btn-default" id="confirm_winner", type="submit" name ="confirm_winner", value="Confirm Winner">
             <input class="btn btn-default" id="unconfirm_winner", type="submit" name ="unconfirm_winner", value="Unconfirm Winner">

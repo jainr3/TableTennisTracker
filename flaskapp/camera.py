@@ -12,6 +12,8 @@ class Camera(BaseCamera):
     # Raspberry Pi: Video Source = 0 is the USB camera
     video_source = 1
     writer = None
+    table_tennis = None # Set elsewhere to reference app.py's object
+    guidelines = False
 
     def __init__(self):
         if os.environ.get('OPENCV_CAMERA_SOURCE'):
@@ -97,11 +99,13 @@ class Camera(BaseCamera):
             if Camera.writer != None:
                 Camera.writer.write(frame)
 
-            # TODO: Update gamestate
+            # Update gamestate
+            frame = Camera.table_tennis.update_game_state(frame)
 
             # Draw the guidelines
-            cv2.line(img=frame, pt1=(int(w/2), 0), pt2=(int(w/2), h), color=(255, 0, 0), thickness=2, lineType=8, shift=0)
-            cv2.line(img=frame, pt1=(0, h - 15), pt2=(w, h - 15), color=(255, 0, 0), thickness=2, lineType=8, shift=0)
+            if Camera.guidelines:
+                cv2.line(img=frame, pt1=(int(w/2), 0), pt2=(int(w/2), h), color=(255, 0, 0), thickness=2, lineType=8, shift=0)
+                cv2.line(img=frame, pt1=(0, h - 15), pt2=(w, h - 15), color=(255, 0, 0), thickness=2, lineType=8, shift=0)
 
             # encode as a jpeg image and return it
             yield cv2.imencode('.jpg', frame)[1].tobytes()

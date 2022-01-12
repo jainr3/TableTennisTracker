@@ -31,10 +31,18 @@ class TableTennis():
 
             # get boundary of this text
             textsize = cv2.getTextSize(score_string, font, 1, 2)[0]
+            text_w, text_h = textsize
 
             # get coords based on boundary
             textX = int((frame.shape[1] - textsize[0]) / 2)
             textY = int((frame.shape[0] + textsize[1]) / 2)
+
+            cv2.rectangle(frame, (textX - 10, BaseCamera.frame_h - 45), (textX + text_w + 10, BaseCamera.frame_h - 55 - text_h), (0, 0, 0), -1)
+
+            if self.current_game.server == 0:
+                cv2.circle(frame, (textX - 5, BaseCamera.frame_h - 45 - 15), 3, (0, 155, 255), -1)
+            elif self.current_game.server == 1:
+                cv2.circle(frame, (textX + text_w + 5, BaseCamera.frame_h - 45 - 15), 3, (0, 155, 255), -1)
 
             cv2.putText(frame, 
                         score_string, 

@@ -4,19 +4,28 @@ class TableTennisGame():
     # Keep track of the game state
     def __init__(self, pr):
         self.score = [0, 0]
-        self.first_server = self.set_first_server()
+        self.set_first_server()
         self.points_required = int(pr)
         self.set_serves_per_turn()
-        self.server = self.recalculate_server()
+        self.recalculate_server()
 
     def __str__(self):
         return "Game to " + str(self.points_required) + " with score " + str(self.score[0]) + "-" + str(self.score[1])
 
     def set_serves_per_turn(self):
+        # If both players have deuce, then there is 1 serve per turn
         if self.points_required == 21:
-            self.serves_per_turn = 5
+            if self.score[0] >= 20 and self.score[1] >= 20:
+                self.serves_per_turn = 1
+            else:
+                self.serves_per_turn = 5
+        elif self.points_required == 11:
+            if self.score[0] >= 10 and self.score[1] >= 10:
+                self.serves_per_turn = 1
+            else:
+                self.serves_per_turn = 2
         else:
-            self.serves_per_turn = 2
+            self.serves_per_turn = 1
 
     def set_first_server(self):
         # Randomly determine the first server
@@ -35,6 +44,7 @@ class TableTennisGame():
     def recalculate_server(self):
         # Based on the points, first server, and num serves per turn
         points_done = self.score[0] + self.score[1]
+        self.set_serves_per_turn()
         serve_turns_completed = points_done // self.serves_per_turn
         if serve_turns_completed % 2 == 1:
             # Server is not the first server since odd number of turns completed
@@ -64,7 +74,9 @@ class TableTennisGame():
         # reduce highest score by 1 since last point is not counting
         if self.score[0] > self.score[1]:
             self.score[0] -= 1
+            self.recalculate_server()
         elif self.score[0] < self.score[1]:
             self.score[1] -= 1
+            self.recalculate_server()
         else:
             print("Warning: Unconfirming a winner with tied score is not valid")

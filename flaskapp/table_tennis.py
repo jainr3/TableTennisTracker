@@ -16,8 +16,7 @@ class TableTennis():
     def set_current_game(self, game):
         self.current_game = game
 
-    def update_game_state(self, frame):
-        # TODO: Update visual display, score
+    def update_visual_display(self, frame):
         if not self.noactive_game():
             # Active game going, augment scores onto frame, who is serving; colors based on score
             score_string = str(self.current_game.score[0]) + " "

@@ -82,7 +82,7 @@ class BaseCamera(object):
 
         return BaseCamera.frame
 
-    def get_frame_size(self):
+    def get_frame_size():
         return (BaseCamera.frame_h, BaseCamera.frame_w)
 
     @staticmethod

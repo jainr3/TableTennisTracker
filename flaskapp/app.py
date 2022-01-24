@@ -8,6 +8,7 @@ import argparse
 
 # import camera driver
 from camera import Camera
+from base_camera import BaseCamera
 
 from table_tennis import TableTennis
 from table_tennis_game import TableTennisGame
@@ -65,7 +66,7 @@ def gen(camera):
 
         if recording_active:
             if Camera.writer is None:
-                (h, w) = camera.get_frame_size()
+                (h, w) = BaseCamera.get_frame_size()
                 filename = time.strftime("%Y-%m-%d %H-%M-%S") + '.avi'
                 # initialize the fourcc, videowriter, dimensions
                 fourcc = cv2.VideoWriter_fourcc(*'MJPG')

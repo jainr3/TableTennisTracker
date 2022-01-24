@@ -14,6 +14,10 @@ class Camera(BaseCamera):
     writer = None
     table_tennis = None # Set elsewhere to reference app.py's object
     guidelines = False
+    buffer = 5
+    hotbox_buffer = 3
+    hotbox_log = deque(maxlen=hotbox_buffer)
+    debug = True
 
     def __init__(self):
         if os.environ.get('OPENCV_CAMERA_SOURCE'):
@@ -31,7 +35,7 @@ class Camera(BaseCamera):
         # list of tracked points
         colorLower = (0, 94, 108)
         colorUpper = (25, 255, 197)
-        buffer = 4
+        buffer = Camera.buffer
         pts = deque(maxlen=buffer)
         camera = cv2.VideoCapture(Camera.video_source)
         #camera = VideoStream(src=0).start() 
@@ -71,7 +75,7 @@ class Camera(BaseCamera):
                 M = cv2.moments(c)
                 center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
                 # only proceed if the radius meets a minimum size
-                if radius > 10:
+                if radius > 3:
                     # draw the circle and centroid on the frame,
                     # then update the list of tracked points
                     cv2.circle(frame, (int(x), int(y)), int(radius),
@@ -93,21 +97,58 @@ class Camera(BaseCamera):
 
             # Set the frame size for use elsewhere
             (h, w) = frame.shape[:2]
-            BaseCamera.frame_h = h
-            BaseCamera.frame_w = w
-            # Save the video frame if the writer is active
-            if Camera.writer != None:
-                Camera.writer.write(frame)
+            if BaseCamera.frame_h == None or BaseCamera.frame_w == None:
+                BaseCamera.frame_h = h
+                BaseCamera.frame_w = w
 
-            # Update gamestate
-            frame = Camera.table_tennis.update_game_state(frame)
+            # Update visual display and gamestate
+            a, b = Camera.update_hotbox(mask)
+
+            if Camera.debug and a != None and b != None:
+                cv2.circle(frame, (a, b), 5, (0, 255, 0), -1)
+            frame = Camera.table_tennis.update_visual_display(frame)
+
+            if not Camera.table_tennis.noactive_game():
+                Camera.table_tennis.current_game.update_game_state(pts, frame)
 
             # Draw the guidelines
             if Camera.guidelines:
                 cv2.line(img=frame, pt1=(int(w/2), 0), pt2=(int(w/2), h), color=(255, 0, 0), thickness=2, lineType=8, shift=0)
                 cv2.line(img=frame, pt1=(0, h - 15), pt2=(w, h - 15), color=(255, 0, 0), thickness=2, lineType=8, shift=0)
 
+            # Save the video frame if the writer is active
+            if Camera.writer != None:
+                Camera.writer.write(frame)
+
             # encode as a jpeg image and return it
             yield cv2.imencode('.jpg', frame)[1].tobytes()
 
         camera.release()
+
+    @staticmethod
+    def update_hotbox(mask):
+        # Divide up the pixels into boxes and track the box
+        x_array, y_array = np.where((mask == [255]))
+
+        boxsize_w = 10
+        boxsize_h = 10
+        hotbox_pixel_count = np.zeros(shape=(int(BaseCamera.frame_w / boxsize_w) + 1 , int(BaseCamera.frame_h / boxsize_h) + 1))
+        for x, y in zip(x_array, y_array):
+            hotbox_pixel_count[y // boxsize_w][x // boxsize_h] += 1
+
+        result = np.where(hotbox_pixel_count == np.amax(hotbox_pixel_count))
+
+        if len(result[0]) in range(1, 5) and len(result[1]) in range(1, 5):
+            proposed_hotbox = ((result[0][0], result[1][0]), False, False)
+        else:
+            return None, None # no proposed hotbox (or too many low quality points)
+
+        if len(Camera.hotbox_log) == 0:
+            last_hotbox = None
+        else:
+            last_hotbox = list(Camera.hotbox_log)[0]
+
+        if last_hotbox != proposed_hotbox:
+            Camera.hotbox_log.appendleft(proposed_hotbox)
+
+        return result[0][0]*boxsize_w, result[1][0]*boxsize_h

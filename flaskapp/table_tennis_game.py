@@ -22,6 +22,7 @@ class TableTennisGame():
         self.recalculate_server()
         self.current_state = "PRE-SERVE"
         self.timeout = None
+        self.last_ball_side = self.first_server
 
     def __str__(self):
         return "Game to " + str(self.points_required) + " with score " + str(self.score[0]) + "-" + str(self.score[1])
@@ -104,7 +105,7 @@ class TableTennisGame():
         else:
             print("Warning: Unconfirming a winner with tied score is not valid")
 
-    def update_game_state(self, pts, frame):
+    def update_game_state(self, pts):
         # Update the game's state machine
         # States include: PRE-SERVE, SERVE, BEFORE-NET, OVER-NET, EXPECT-HIT, GAME-OVER
         if self.current_state == "PRE-SERVE":
@@ -116,31 +117,31 @@ class TableTennisGame():
                 playsound(serve_bell)
                 self.set_timeout(None)
         elif self.current_state == "SERVE":
-            if self.detect_bounce(pts, frame) and self.server == self.get_ball_side(pts):
+            if self.detect_bounce(pts) and self.server == self.get_ball_side(pts):
                 self.current_state = "BEFORE-NET"
                 self.set_timeout(datetime.datetime.now()) # state change
         elif self.current_state == "BEFORE-NET":
-            if (self.detect_bounce(pts, frame) and self.server == self.get_ball_side(pts)) or self.detect_timeout():
+            if (self.detect_bounce(pts) and self.server == self.get_ball_side(pts)) or self.detect_timeout():
                 # Double bounce on server's side; award point to nonserver
                 self.increment(self.get_non_server())
                 self.set_timeout(None)
-            elif self.get_ball_side(pts) == self.get_non_server():
+            elif self.get_ball_side(pts) != self.last_ball_side and self.get_ball_side(pts) in {0, 1} and self.last_ball_side in {0, 1}:
                 self.current_state = "OVER-NET"
                 self.set_timeout(datetime.datetime.now()) # state change
         elif self.current_state == "OVER-NET":
-            if self.detect_hit(pts, frame) or self.detect_timeout():
+            if self.detect_hit(pts) or self.detect_timeout():
                 # Hit before bounce; award point to non ball side
                 self.increment(self.get_non_ball_side(pts))
                 self.set_timeout(None)
-            elif self.detect_bounce(pts, frame):
+            elif self.detect_bounce(pts):
                 self.current_state = "EXPECT-HIT"
                 self.set_timeout(datetime.datetime.now()) # state change
         elif self.current_state == "EXPECT-HIT":
-            if self.detect_bounce(pts, frame) or self.detect_timeout():
+            if self.detect_bounce(pts) or self.detect_timeout():
                 # 2nd bounce on same side
                 self.increment(self.get_non_ball_side(pts))
                 self.set_timeout(None)
-            elif self.detect_hit(pts, frame):
+            elif self.detect_hit(pts):
                 self.current_state = "BEFORE-NET"
                 self.set_timeout(datetime.datetime.now()) # state change
         elif self.current_state == "GAME-OVER":
@@ -151,6 +152,10 @@ class TableTennisGame():
         else:
             print("Warning: Unrecognized state in state machine:", self.current_state)
 
+        self.last_ball_side = self.get_ball_side()
+        if Camera.debug:
+            cv2.putText(Camera.game_state_frame, self.current_state, (int(BaseCamera.frame_w / 2), BaseCamera.frame_h - 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_4)
+
     def detect_pre_serve(self, pts):
         # Returns True/False if ball is above serve height on server's side of screen
         pts = list(pts)[0:3] # check most recent 3 points
@@ -160,8 +165,14 @@ class TableTennisGame():
         # Checked points are bad
         return False
 
-    def detect_bounce(self, pts, frame):
+    def detect_bounce(self, pts):
         # Returns True/False if ball went down then up (inspect Camera.hotbox_log)
+        count = 0
+        for pt in pts:
+            if pt == None or (pt != None and pt[1] < int(BaseCamera.frame_h / 2)):
+                count += 1
+        if count == len(pts):
+            return False # can't have a bounce in midair!
         motion_seq = [] # list of relative down/up or -1, 1
         hotboxes = Camera.hotbox_log
         # Exactly 1 upward and 1 downward box transitions means bounce
@@ -184,7 +195,7 @@ class TableTennisGame():
             for i in range(len(Camera.hotbox_log)):
                 Camera.hotbox_log[i] = (Camera.hotbox_log[i][0], True, Camera.hotbox_log[i][2])
             if Camera.debug:
-                cv2.putText(frame, "BOUNCE", pts[0], cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_4)
+                cv2.putText(Camera.game_state_frame, "BOUNCE", pts[0], cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_4)
             return True
 
     def get_ball_side(self, pts):
@@ -207,7 +218,7 @@ class TableTennisGame():
         else:
             return -1
 
-    def detect_hit(self, pts, frame):
+    def detect_hit(self, pts):
         # Returns True/False if ball went left then right or
         # right then left (depending on side of table)
         if self.get_ball_side(pts) == 0:
@@ -238,7 +249,7 @@ class TableTennisGame():
             for i in range(len(Camera.hotbox_log)):
                 Camera.hotbox_log[i] = (Camera.hotbox_log[i][0], Camera.hotbox_log[i][1], True)
             if Camera.debug:
-                cv2.putText(frame, "HIT", pts[0], cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_4)
+                cv2.putText(Camera.game_state_frame, "HIT", pts[0], cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_4)
             return True
 
     def set_timeout(self, time):

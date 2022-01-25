@@ -18,6 +18,7 @@ class Camera(BaseCamera):
     hotbox_buffer = 3
     hotbox_log = deque(maxlen=hotbox_buffer)
     debug = True
+    game_state_frame = None # for debug
 
     def __init__(self):
         if os.environ.get('OPENCV_CAMERA_SOURCE'):
@@ -109,7 +110,9 @@ class Camera(BaseCamera):
             frame = Camera.table_tennis.update_visual_display(frame)
 
             if not Camera.table_tennis.noactive_game():
-                Camera.table_tennis.current_game.update_game_state(pts, frame)
+                Camera.game_state_frame = frame
+                Camera.table_tennis.current_game.update_game_state(pts)
+                frame = Camera.game_state_frame
 
             # Draw the guidelines
             if Camera.guidelines:

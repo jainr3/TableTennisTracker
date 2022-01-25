@@ -44,7 +44,7 @@
   </a>
 </div>
 
-This project tracks a table tennis ball as it moves around during gameplay. While in professional table tennis, the ball may be hit at much faster speeds, this project aims to track the ball at lower speeds using a regular mobile device camera. Additionally, the performance is highly dependent on the lighting conditions and overall environment setup.
+This project tracks a table tennis ball as it moves around during gameplay. While in professional table tennis, the ball may be hit at much faster speeds, this project aims to track the ball at lower speeds using a regular mobile device camera. Additionally, the performance is highly dependent on the lighting conditions and overall environment setup. There are two ball tracking algorithms that are being used, both of which use a color based image map for orange table tennis balls. The color thresholds for "orange" may need to be adjusted as described in the calibration section. The first algorithm detects the contours of orange blobs as seen [here](https://www.pyimagesearch.com/2015/09/14/ball-tracking-with-opencv/). The second algorithm uses hotbox detection similar to [this project](https://people.ece.cornell.edu/land/courses/ece5760/FinalProjects/s2015/ttt/ttt/ttt/index.html).
 
 <p align="right">[<a href="#top">Top</a>]</p>
 
@@ -166,6 +166,24 @@ When a game is active, the following options will appear.
 
 <div align="center">
   <img src="img/admin_page2.png" alt="Admin Page 1">
+</div>
+
+### Camera Debug Mode
+
+The Camera has a debug mode as indicated by the flag in the Camera class. When set to true, the debug mode will enable hotbox tracking for the ball, display text whenever a bounce or hit is detected, as well as display the state machine's current state on the camera feed.
+
+## Future Improvements
+
+There is definitely room for improvement in the project. Some of these areas include:
+
+* Lighting condition calibration, Hotbox detection
+* Higher frame rate camera + processing capabilities to prevent "blur"
+* Unhandled states in the state machine such as ball hitting the net but still going over
+
+Example of "blur"
+
+<div align="center">
+  <img src="img/blur.png" alt="Blur">
 </div>
 
 ## License

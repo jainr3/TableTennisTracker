@@ -152,7 +152,7 @@ class TableTennisGame():
         else:
             print("Warning: Unrecognized state in state machine:", self.current_state)
 
-        self.last_ball_side = self.get_ball_side()
+        self.last_ball_side = self.get_ball_side(pts)
         if Camera.debug:
             cv2.putText(Camera.game_state_frame, self.current_state, (int(BaseCamera.frame_w / 2), BaseCamera.frame_h - 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_4)
 

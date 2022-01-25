@@ -52,6 +52,7 @@ This project tracks a table tennis ball as it moves around during gameplay. Whil
 
 * [OpenCV](https://opencv.org/)
 * [Flask](https://flask.palletsprojects.com/en/2.0.x/)
+* [DroidCam](https://www.dev47apps.com/)
 
 <p align="right">[<a href="#top">Top</a>]</p>
 
@@ -176,7 +177,7 @@ The gameplay is tracked via a state machine [(original source)](https://people.e
   <img src="img/fsm.png" alt="State machine">
 </div>
 
-To start serving, the server should raise the ball within camera's field of vision until it is above a certain height and a chime is heard. Then the server may begin their serve. The rest of the state transitions follow the diagram where the computer attempts to detect bounces, hits, timeouts, and ball side switches. 
+To start serving, the server should raise the ball within camera's field of vision until it is above a certain height and a chime is heard. Then the server may begin their serve. The rest of the state transitions follow the diagram where the computer attempts to detect bounces, hits, timeouts, and ball side switches. When a point is scored, another sound will be played.
 
 ### Camera Debug Mode
 

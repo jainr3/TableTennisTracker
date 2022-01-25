@@ -9,7 +9,7 @@
 <div align="center">
 <h3 align="center">Table Tennis Tracker</h3>
   <p align="center">
-    Tracks a table tennis ball as a game is being played.
+    Tracks a table tennis ball as a game is being played and attempts to automatically keep score.
   </p>
 </div>
 
@@ -167,6 +167,16 @@ When a game is active, the following options will appear.
 <div align="center">
   <img src="img/admin_page2.png" alt="Admin Page 1">
 </div>
+
+### Gameplay and automatic scoring
+
+The gameplay is tracked via a state machine [(original source)](https://people.ece.cornell.edu/land/courses/ece5760/FinalProjects/s2015/ttt/ttt/ttt/images/fsm.png).
+
+<div align="center">
+  <img src="img/fsm.png" alt="State machine">
+</div>
+
+To start serving, the server should raise the ball within camera's field of vision until it is above a certain height and a chime is heard. Then the server may begin their serve. The rest of the state transitions follow the diagram where the computer attempts to detect bounces, hits, timeouts, and ball side switches. 
 
 ### Camera Debug Mode
 

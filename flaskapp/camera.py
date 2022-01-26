@@ -110,9 +110,11 @@ class Camera(BaseCamera):
             frame = Camera.table_tennis.update_visual_display(frame)
 
             if not Camera.table_tennis.noactive_game():
-                Camera.game_state_frame = frame
+                if Camera.debug:
+                    Camera.game_state_frame = frame
                 Camera.table_tennis.current_game.update_game_state(pts)
-                frame = Camera.game_state_frame
+                if Camera.debug:
+                    frame = Camera.game_state_frame
 
             # Draw the guidelines
             if Camera.guidelines:

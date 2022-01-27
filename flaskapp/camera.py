@@ -19,6 +19,8 @@ class Camera(BaseCamera):
     hotbox_log = deque(maxlen=hotbox_buffer)
     debug = True
     game_state_frame = None # for debug
+    boxsize_w = 10
+    boxsize_h = 10
 
     def __init__(self):
         if os.environ.get('OPENCV_CAMERA_SOURCE'):
@@ -115,7 +117,6 @@ class Camera(BaseCamera):
                 Camera.table_tennis.current_game.update_game_state(pts)
                 if Camera.debug:
                     frame = Camera.game_state_frame
-
             # Draw the guidelines
             if Camera.guidelines:
                 cv2.line(img=frame, pt1=(int(w/2), 0), pt2=(int(w/2), h), color=(255, 0, 0), thickness=2, lineType=8, shift=0)
@@ -135,8 +136,8 @@ class Camera(BaseCamera):
         # Divide up the pixels into boxes and track the box
         x_array, y_array = np.where((mask == [255]))
 
-        boxsize_w = 10
-        boxsize_h = 10
+        boxsize_w = Camera.boxsize_w
+        boxsize_h = Camera.boxsize_h
         hotbox_pixel_count = np.zeros(shape=(int(BaseCamera.frame_w / boxsize_w) + 1 , int(BaseCamera.frame_h / boxsize_h) + 1))
         for x, y in zip(x_array, y_array):
             hotbox_pixel_count[y // boxsize_w][x // boxsize_h] += 1

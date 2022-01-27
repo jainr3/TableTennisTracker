@@ -22,7 +22,6 @@ class TableTennisGame():
         self.recalculate_server()
         self.current_state = "PRE-SERVE"
         self.timeout = None
-        self.last_ball_side = self.first_server
 
     def __str__(self):
         return "Game to " + str(self.points_required) + " with score " + str(self.score[0]) + "-" + str(self.score[1])
@@ -47,7 +46,7 @@ class TableTennisGame():
         self.first_server = random.getrandbits(1)
 
     def increment(self, player):
-        if not self.check_winner():
+        if not self.check_winner() and player != -1:
             self.score[player] += 1
             playsound(score_bell)
         self.recalculate_server()
@@ -125,13 +124,13 @@ class TableTennisGame():
                 # Double bounce on server's side; award point to nonserver
                 self.increment(self.get_non_server())
                 self.set_timeout(None)
-            elif self.get_ball_side(pts) != self.last_ball_side and self.get_ball_side(pts) in {0, 1} and self.last_ball_side in {0, 1}:
+            elif self.detect_side_switch():
                 self.current_state = "OVER-NET"
                 self.set_timeout(datetime.datetime.now()) # state change
         elif self.current_state == "OVER-NET":
             if self.detect_hit(pts) or self.detect_timeout():
                 # Hit before bounce; award point to non ball side
-                self.increment(self.get_non_ball_side(pts))
+                self.increment(self.get_non_ball_side()) # don't pass pts as argument in case of timeout
                 self.set_timeout(None)
             elif self.detect_bounce(pts):
                 self.current_state = "EXPECT-HIT"
@@ -139,7 +138,7 @@ class TableTennisGame():
         elif self.current_state == "EXPECT-HIT":
             if self.detect_bounce(pts) or self.detect_timeout():
                 # 2nd bounce on same side
-                self.increment(self.get_non_ball_side(pts))
+                self.increment(self.get_non_ball_side()) # don't pass pts as argument in case of timeout
                 self.set_timeout(None)
             elif self.detect_hit(pts):
                 self.current_state = "BEFORE-NET"
@@ -152,7 +151,6 @@ class TableTennisGame():
         else:
             print("Warning: Unrecognized state in state machine:", self.current_state)
 
-        self.last_ball_side = self.get_ball_side(pts)
         if Camera.debug:
             cv2.putText(Camera.game_state_frame, self.current_state, (int(BaseCamera.frame_w / 2), BaseCamera.frame_h - 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_4)
 
@@ -160,7 +158,7 @@ class TableTennisGame():
         # Returns True/False if ball is above serve height on server's side of screen
         pts = list(pts)[0:3] # check most recent 3 points
         for pt in pts:
-            if pt != None and pt[1] < 70 and self.server == self.get_ball_side(pts):
+            if pt != None and pt[1] < 90 and self.server == self.get_ball_side(pts):
                 return True
         # Checked points are bad
         return False
@@ -185,7 +183,7 @@ class TableTennisGame():
             h2 = h2_box[0]
             if h1[1] < h2[1]:
                 motion_seq.append(-1) # down
-            elif h1[1] >= h2[1]:
+            elif h1[1] >= h2[1]: # seems to work better with the = here
                 motion_seq.append(1) # up
 
         if motion_seq != [-1, 1]:
@@ -198,18 +196,35 @@ class TableTennisGame():
                 cv2.putText(Camera.game_state_frame, "BOUNCE", pts[0], cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_4)
             return True
 
-    def get_ball_side(self, pts):
+    def get_ball_side(self, pts=None):
+        # If pts isn't None, we may be trying to use an empty deque if the ball isn't in frame
+        # If pts is None, the function will rely on Camera.hotbox_log which is the last known location
         # Returns 0 or 1 for Left/Right side of frame
-        for pt in pts:
-            if pt == None: # try a different point
-                continue
-            if pt[0] < int(BaseCamera.get_frame_size()[1] / 2):
-                return 0
-            elif pt[0] > int(BaseCamera.get_frame_size()[1] / 2):
-                return 1
-        return -1 # not found
+        if pts != None:
+            middle = int(BaseCamera.get_frame_size()[1] / 2)
+            for pt in pts:
+                if pt == None: # try a different point
+                    continue
+                if pt[0] < middle:
+                    return 0
+                elif pt[0] > middle:
+                    return 1
+            return -1 # not found
+        else:
+            # Rely on Camera.hotbox_log
+            middle = int(BaseCamera.get_frame_size()[1] / 2) / Camera.boxsize_w
+            for h in Camera.hotbox_log:
+                if h == None:
+                    continue
+                if h[0][0] < middle:
+                    return 0
+                elif h[0][0] > middle:
+                    return 1
+            return -1 # not found
 
-    def get_non_ball_side(self, pts):
+    def get_non_ball_side(self, pts=None):
+        # If pts isn't None, we may be trying to use an empty deque if the ball isn't in frame
+        # If pts is None, the function will rely on Camera.hotbox_log which is the last known location
         side = self.get_ball_side(pts)
         if side == 0:
             return 1
@@ -217,6 +232,26 @@ class TableTennisGame():
             return 0
         else:
             return -1
+
+    def detect_side_switch(self):
+        # Based on hotboxes, detect if the side of screen changed
+        motion_seq = []
+        tie = False
+        middle = int(BaseCamera.get_frame_size()[1] / 2) / Camera.boxsize_w
+        for h in Camera.hotbox_log:
+            if h[0][0] < middle:
+                motion_seq.append(0)
+            elif h[0][0] > middle:
+                motion_seq.append(1)
+            else:
+                tie = True
+        transition = [[1, 0, 0], [1, 1, 0], [0, 1, 1], [0, 0, 1]]
+        if motion_seq in transition or tie:
+            if Camera.debug:
+                cv2.putText(Camera.game_state_frame, "SIDE-SWITCH", (int(BaseCamera.frame_w / 2)-250, BaseCamera.frame_h - 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_4)
+            return True
+        else:
+            return False # 010, 101, 000, 111 cases don't count
 
     def detect_hit(self, pts):
         # Returns True/False if ball went left then right or
@@ -239,7 +274,7 @@ class TableTennisGame():
             h2 = h2_box[0]
             if h1[0] > h2[0]:
                 motion_seq.append(-1) # left
-            elif h1[0] <= h2[0]:
+            elif h1[0] < h2[0]:
                 motion_seq.append(1) # right
 
         if motion_seq != goal:

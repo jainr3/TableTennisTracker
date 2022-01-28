@@ -3,6 +3,7 @@ import datetime
 import random
 import cv2, os
 from playsound import playsound
+import threading, time
 
 
 from base_camera import BaseCamera
@@ -22,9 +23,26 @@ class TableTennisGame():
         self.recalculate_server()
         self.current_state = "PRE-SERVE"
         self.timeout = None
+        self.sounds = [False, False] # serve / score
+        self.active_game = True
+        self.init_sound_thread()
 
     def __str__(self):
         return "Game to " + str(self.points_required) + " with score " + str(self.score[0]) + "-" + str(self.score[1])
+
+    def init_sound_thread(self):
+        t = threading.Thread(target=self.sound)
+        t.start()
+
+    def sound(self):
+        while self.active_game:
+            if self.sounds[0]:
+                playsound(serve_bell)
+                self.sounds[0] = False
+            if self.sounds[1]:
+                playsound(score_bell)
+                self.sounds[1] = False
+            time.sleep(1)
 
     def set_serves_per_turn(self):
         # If both players have deuce, then there is 1 serve per turn
@@ -48,7 +66,7 @@ class TableTennisGame():
     def increment(self, player):
         if not self.check_winner() and player != -1:
             self.score[player] += 1
-            playsound(score_bell)
+            self.sounds[1] = True
         self.recalculate_server()
         self.current_state = "PRE-SERVE"
 
@@ -113,7 +131,7 @@ class TableTennisGame():
                 self.set_timeout(None)
             elif self.detect_pre_serve(pts):
                 self.current_state = "SERVE"
-                playsound(serve_bell)
+                self.sounds[0] = True
                 self.set_timeout(None)
         elif self.current_state == "SERVE":
             if self.detect_bounce(pts) and self.server == self.get_ball_side(pts):

@@ -55,5 +55,6 @@ class TableTennis():
 
     def end_game(self):
         # Keep a log of past games.
+        self.current_game.active_game = False # ends the sound thread
         self.past_games.append(self.current_game)
         self.current_game = None

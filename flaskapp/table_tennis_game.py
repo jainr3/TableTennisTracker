@@ -25,7 +25,7 @@ class TableTennisGame():
         self.timeout = None
         self.sounds = [False, False] # serve / score
         self.active_game = True
-        self.init_sound_thread()
+        #self.init_sound_thread()
 
     def __str__(self):
         return "Game to " + str(self.points_required) + " with score " + str(self.score[0]) + "-" + str(self.score[1])
@@ -42,7 +42,6 @@ class TableTennisGame():
             if self.sounds[1]:
                 playsound(score_bell)
                 self.sounds[1] = False
-            time.sleep(1)
 
     def set_serves_per_turn(self):
         # If both players have deuce, then there is 1 serve per turn
@@ -265,8 +264,8 @@ class TableTennisGame():
                 tie = True
         transition = [[1, 0, 0], [1, 1, 0], [0, 1, 1], [0, 0, 1]]
         if motion_seq in transition or tie:
-            if Camera.debug:
-                cv2.putText(Camera.game_state_frame, "SIDE-SWITCH", (int(BaseCamera.frame_w / 2)-250, BaseCamera.frame_h - 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_4)
+            #if Camera.debug:
+            #    cv2.putText(Camera.game_state_frame, "SIDE-SWITCH", (int(BaseCamera.frame_w / 2)-250, BaseCamera.frame_h - 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_4)
             return True
         else:
             return False # 010, 101, 000, 111 cases don't count

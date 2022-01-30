@@ -40,7 +40,7 @@
 
 <div align="center">
   <a href="https://github.com/jainr3/TableTennisTracker">
-    <img src="img/bounce.gif" alt="Bounce">
+    <img src="img/full.gif" alt="Tracking">
   </a>
 </div>
 
@@ -182,6 +182,12 @@ To start serving, the server should raise the ball within camera's field of visi
 ### Camera Debug Mode
 
 The Camera has a debug mode as indicated by the flag in the Camera class. When set to true, the debug mode will enable hotbox tracking for the ball, display text whenever a bounce or hit is detected, as well as display the state machine's current state on the camera feed.
+
+<div align="center">
+  <a href="https://github.com/jainr3/TableTennisTracker">
+    <img src="img/bounce.gif" alt="Bounce">
+  </a>
+</div>
 
 ## Future Improvements
 

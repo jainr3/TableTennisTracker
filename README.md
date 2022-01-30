@@ -40,7 +40,7 @@
 
 <div align="center">
   <a href="https://github.com/jainr3/TableTennisTracker">
-    <img src="img/full.gif" alt="Tracking">
+    <img src="img/full2.gif" alt="Tracking">
   </a>
 </div>
 
@@ -177,7 +177,13 @@ The gameplay is tracked via a state machine [(original source)](https://people.e
   <img src="img/fsm.png" alt="State machine">
 </div>
 
-To start serving, the server should raise the ball within camera's field of vision until it is above a certain height and a chime is heard. Then the server may begin their serve. The rest of the state transitions follow the diagram where the computer attempts to detect bounces, hits, timeouts, and ball side switches. When a point is scored, another sound will be played.
+To start serving, the server should raise the ball within camera's field of vision until it is above a certain height and a chime is heard. Then the server may begin their serve. The rest of the state transitions follow the diagram where the computer attempts to detect bounces, hits, timeouts, and ball side switches. When a point is scored, another sound will be played. The sound functionality seemed to cause delays in frame processing, so was disabled.
+
+<div align="center">
+  <a href="https://github.com/jainr3/TableTennisTracker">
+    <img src="img/bounce.gif" alt="Bounce">
+  </a>
+</div>
 
 ### Camera Debug Mode
 
@@ -185,7 +191,7 @@ The Camera has a debug mode as indicated by the flag in the Camera class. When s
 
 <div align="center">
   <a href="https://github.com/jainr3/TableTennisTracker">
-    <img src="img/bounce.gif" alt="Bounce">
+    <img src="img/full.gif" alt="Tracking">
   </a>
 </div>
 

@@ -233,6 +233,7 @@ Project Link: [https://github.com/jainr3/TableTennisTracker](https://github.com/
 * [Flask Login](https://github.com/maxcountryman/flask-login)
 * [Ball Color Calibration](https://newbedev.com/choosing-the-correct-upper-and-lower-hsv-boundaries-for-color-detection-with-cv-inrange-opencv)
 * [Ball Color Calibration Reference](https://www.pyimagesearch.com/2014/08/04/opencv-python-color-detection/)
+* [Rishabh Jain](https://github.com/J-Rishabh) - Debugging & Inspiration
 
 <p align="right">[<a href="#top">Top</a>]</p>
 
